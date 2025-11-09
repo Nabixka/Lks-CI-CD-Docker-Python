@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: RDS
+
+Parameters:
+  AllocatedStorage:
+    Type: Number
+    Default: 20
+  
+  DBInstanceID:
+    Type: String
+    Default: LKS-RDS-Apps
+
+  DBInstanceClass:
+    Type: String
+    Default: db.t3.micro
+    
+  DBName:
+    Type: String
+    Default: techno-rds
+
+  MasterUsername:
+    Type: String
+    Default: Technobrain2025!
+
+  MasterUserPassword:
+    Type: String
+    NoEcho: true
+
+Resources:
+  RDSDBInstance:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      AllocatedStorage: !Ref AllocatedStorage
+      DBInstanceIdentifier: !Ref DBInstanceID
+      DBInstanceClass: !Ref DBInstanceClass
+      DBName: !Ref DBName
+      DBSubnetGroupName: !Ref myDBSubnetGroup
+      Engine: MariaDB
+      EngineVersion: "11.4.8"
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
+      PubliclyAccessible: false
+
+
+  myDBSubnetGroup: 
+    Type: AWS::RDS::DBSubnetGroup
+    Properties: 
+      DBSubnetGroupDescription: Description of subnet group
+      SubnetIds: 
+        - !ImportValue PrivateSubnet1aID
+        - !ImportValue PrivateSubnet1bID
+        

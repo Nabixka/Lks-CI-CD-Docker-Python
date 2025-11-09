@@ -1,0 +1,178 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: VPC
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 20.2.0.0/16
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+       - Key: Name
+         Value: lks-jaktim2-abi
+
+  PublicSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 20.2.0.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: "us-east-1a"
+      Tags:
+      - Key: Name
+        Value: lks-PublicSubnet1a
+
+  PublicSubnet1b:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 20.2.1.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: "us-east-1b"
+      Tags:
+      - Key: Name
+        Value: lks-PublicSubnet1b
+
+  PrivateSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 20.2.2.0/24
+      AvailabilityZone: "us-east-1a"
+      Tags:
+      - Key: Name
+        Value: lks-PrivateSubnet1a
+
+  PrivateSubnet1b:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 20.2.3.0/24
+      AvailabilityZone: "us-east-1b"
+      Tags:
+      - Key: Name
+        Value: lks-PrivateSubnet1b
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: lks-PublicRouteTable
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: lks-PrivateRouteTable
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: lks-InternetGateway
+
+  PublicSubnetRouteTableAssociation1a:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PublicSubnet1a
+      RouteTableId:
+        Ref: PublicRouteTable
+
+  PublicSubnetRouteTableAssociation1b:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PublicSubnet1b
+      RouteTableId:
+        Ref: PublicRouteTable
+
+  PrivateSubnetRouteTableAssociation1a:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PrivateSubnet1a
+      RouteTableId:
+        Ref: PrivateRouteTable
+
+  PrivateSubnetRouteTableAssociation1b:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PrivateSubnet1b
+      RouteTableId:
+        Ref: PrivateRouteTable
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+         Ref: VPC
+      InternetGatewayId:
+         Ref: InternetGateway
+
+  NATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NATGatewayEIP.AllocationId
+      SubnetId: !Ref PublicSubnet1a
+      Tags:
+        - Key: stack
+          Value: production
+
+  NATGatewayEIP:
+     Type: AWS::EC2::EIP
+     Properties:
+        Domain: vpc
+
+  RouteNATGateway:
+     Type: AWS::EC2::Route
+     Properties:
+        RouteTableId: !Ref PrivateRouteTable
+        DestinationCidrBlock: '0.0.0.0/0'
+        NatGatewayId: !Ref NATGateway
+  
+  ipv6CidrBlock:
+    Type: AWS::EC2::VPCCidrBlock
+    Properties:
+      VpcId: !Ref VPC
+      AmazonProvidedIpv6CidrBlock: true
+
+Outputs:
+
+  VpcId:
+    Description: Ini VPC
+    Value: !Ref VPC
+    Export:
+      Name: VpcId
+
+  PublicSubnet1aID:
+    Description: Ini PublicSubnet1a
+    Value: !Ref PublicSubnet1a
+    Export:
+      Name: PublicSubnet1aID
+
+  PublicSubnet1bID:
+    Description: Ini PublicSubnet1b
+    Value: !Ref PublicSubnet1b
+    Export:
+      Name: PublicSubnet1bID
+
+  PrivateSubnet1aID:
+    Description: Ini PrivateSubnet1a
+    Value: !Ref PrivateSubnet1a
+    Export:
+      Name: PrivateSubnet1aID
+
+  PrivateSubnet1bID:
+    Description: Ini PrivateSubnet1b
+    Value: !Ref PrivateSubnet1b
+    Export:
+      Name: PrivateSubnet1bID

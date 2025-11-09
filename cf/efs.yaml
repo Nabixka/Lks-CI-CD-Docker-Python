@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+
+  FileSystemResource:
+    Type: 'AWS::EFS::FileSystem'
+    Properties:
+      BackupPolicy:
+        Status: ENABLED
+      PerformanceMode: generalPurpose
+      ThroughputMode: elastic
+      Encrypted: true
+      LifecyclePolicies:
+        - TransitionToIA: AFTER_30_DAYS
+        - TransitionToArchive: AFTER_90_DAYS
+        - TransitionToPrimaryStorageClass: AFTER_1_ACCESS
+
+      FileSystemTags:
+        - Key: Name
+          Value: lksappsefs
+
+      FileSystemPolicy:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "elasticfilesystem:ClientMount"
+            Principal: '*'
+      

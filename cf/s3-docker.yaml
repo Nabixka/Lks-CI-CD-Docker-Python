@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: S3
+
+Resources:
+
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: lks-dockerimage-fadhil-25
+
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+      AccessControl: AwsExecRead 
+      
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: BucketOwnerPreferred
+      
+      VersioningConfiguration:
+        Status: Enabled
+
+  SampleBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Sub '${S3Bucket.Arn}/*'
+            Principal: '*'
+          

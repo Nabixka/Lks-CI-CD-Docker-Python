@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: S3
+
+Resources:
+
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: lks-kabbanyumas-fadhil-25
+
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+      AccessControl: AwsExecRead 
+      
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: BucketOwnerPreferred
+
+      LifecycleConfiguration:
+        Rules:
+          - Id: GlacierRule
+            Prefix: glacier
+            Status: Enabled
+            ExpirationInDays: 365
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: GLACIER
+
+  SampleBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Sub '${S3Bucket.Arn}/*'
+            Principal: '*'
