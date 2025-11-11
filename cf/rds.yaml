@@ -2,13 +2,14 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: RDS
 
 Parameters:
+
   AllocatedStorage:
     Type: Number
     Default: 20
   
   DBInstanceID:
     Type: String
-    Default: LKS-RDS-Apps
+    Default: your_instance_name
 
   DBInstanceClass:
     Type: String
@@ -16,11 +17,11 @@ Parameters:
     
   DBName:
     Type: String
-    Default: techno-rds
+    Default: your_db_name
 
   MasterUsername:
     Type: String
-    Default: Technobrain2025!
+    Default: your_db_username
 
   MasterUserPassword:
     Type: String
@@ -34,6 +35,8 @@ Resources:
       DBInstanceIdentifier: !Ref DBInstanceID
       DBInstanceClass: !Ref DBInstanceClass
       DBName: !Ref DBName
+      VPCSecurityGroups: 
+       - !ImportValue SGAPPID
       DBSubnetGroupName: !Ref myDBSubnetGroup
       Engine: MariaDB
       EngineVersion: "11.4.8"
