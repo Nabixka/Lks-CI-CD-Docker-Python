@@ -100,6 +100,3 @@ def update_user(user_id):
         return jsonify({"message": "Used sudah diupdate", "data": response.json()})
     else:
         return jsonify({"error": "Failed to update user"}), response.status_code
-
-if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
