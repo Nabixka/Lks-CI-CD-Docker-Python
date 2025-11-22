@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: NAT Instance with ImportValue for SG and Subnets
+
+Parameters:
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: EC2 KeyPair for NAT Instance SSH
+
+  NATInstanceAMI:
+    Type: AWS::EC2::Image::Id
+    Default: ami-0015c0130d6cc5da7
+    Description: NAT Instance AMI
+
+Resources:
+
+  NATSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: NAT Instance Security Group
+      VpcId: !ImportValue VpcId
+      SecurityGroupIngress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+
+  NATInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      ImageId: !Ref NATInstanceAMI
+      KeyName: !Ref KeyPairName
+      SubnetId: !ImportValue PublicSubnet1aID
+      SourceDestCheck: false
+      SecurityGroupIds:
+        - !Ref NATSecurityGroup
+      Tags:
+        - Key: Name
+          Value: NAT-Instance
+
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  EIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt ElasticIP.AllocationId
+      InstanceId: !Ref NATInstance
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !ImportValue VpcId
+
+  DefaultRouteToNAT:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      InstanceId: !Ref NATInstance
+
+  PrivateSubnetAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !ImportValue PrivateSubnet1aID
+
+Outputs:
+  NATInstanceId:
+    Value: !Ref NATInstance
+  NATIP:
+    Value: !Ref ElasticIP

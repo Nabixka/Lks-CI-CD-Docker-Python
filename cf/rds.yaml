@@ -9,7 +9,7 @@ Parameters:
   
   DBInstanceID:
     Type: String
-    Default: your_instance_name
+    Default: database-1
 
   DBInstanceClass:
     Type: String
@@ -53,3 +53,12 @@ Resources:
         - !ImportValue PrivateSubnet1aID
         - !ImportValue PrivateSubnet1bID
         
+Outputs:
+
+  Endpoint:
+    Description: Endpoint RDS
+    Value: !GetAtt RDSDBInstance.Endpoint.Address
+
+  RDSPort:
+    Description: Port RDS
+    Value: !GetAtt RDSDBInstance.Endpoint.Port

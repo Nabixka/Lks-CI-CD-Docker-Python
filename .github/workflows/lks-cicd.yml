@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - main  # Jalankan pipeline saat ada push ke branch main
 
 jobs:
   install:
@@ -88,7 +88,7 @@ jobs:
       - name: Deploy to Elastic Beanstalk
         run: |
           aws elasticbeanstalk create-application-version \
-            --application-name ${{ secrets.EB_NAME }} \
+            --application-name ${{ secrets.EB_APP_NAME }} \
             --version-label $GITHUB_SHA \
             --source-bundle S3Bucket=${{ secrets.S3_BUCKET_NAME }},S3Key=flask-app.zip \
             --process
