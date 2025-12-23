@@ -38,8 +38,8 @@ Resources:
       VPCSecurityGroups: 
        - !ImportValue SGAPPID
       DBSubnetGroupName: !Ref myDBSubnetGroup
-      Engine: MariaDB
-      EngineVersion: "11.4.8"
+      Engine: MySQL
+      EngineVersion: "8.0.43"
       MasterUsername: !Ref MasterUsername
       MasterUserPassword: !Ref MasterUserPassword
       PubliclyAccessible: false

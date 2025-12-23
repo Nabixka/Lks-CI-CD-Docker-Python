@@ -18,23 +18,40 @@ Resources:
     Properties:
       GroupDescription: NAT Instance Security Group
       VpcId: !ImportValue VpcId
+      Tags:
+        - Key: Name
+          Value: "lks-sg-nat"
       SecurityGroupIngress:
-        - IpProtocol: -1
-          CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:
-        - IpProtocol: -1
-          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 20.2.2.0/24
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 20.2.3.0/24
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 20.2.2.0/24
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 20.2.3.0/24
 
   NATInstance:
     Type: AWS::EC2::Instance
     Properties:
-      InstanceType: t3.micro
+      InstanceType: t2.micro
       ImageId: !Ref NATInstanceAMI
       KeyName: !Ref KeyPairName
-      SubnetId: !ImportValue PublicSubnet1aID
       SourceDestCheck: false
-      SecurityGroupIds:
-        - !Ref NATSecurityGroup
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          GroupSet:
+            - !Ref NATSecurityGroup
+          SubnetId: !ImportValue PublicSubnet1aID
       Tags:
         - Key: Name
           Value: NAT-Instance
@@ -49,24 +66,6 @@ Resources:
     Properties:
       AllocationId: !GetAtt ElasticIP.AllocationId
       InstanceId: !Ref NATInstance
-
-  PrivateRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !ImportValue VpcId
-
-  DefaultRouteToNAT:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      InstanceId: !Ref NATInstance
-
-  PrivateSubnetAssoc:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      SubnetId: !ImportValue PrivateSubnet1aID
 
 Outputs:
   NATInstanceId:

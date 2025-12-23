@@ -9,7 +9,7 @@ Resources:
       EnableDnsHostnames: 'true'
       Tags:
        - Key: Name
-         Value: lks-jaktim2-abi
+         Value: lks-kab-banyumas
 
   PublicSubnet1a:
     Type: AWS::EC2::Subnet
@@ -86,33 +86,12 @@ Resources:
       InternetGatewayId:
          Ref: InternetGateway
 
-  NATGateway:
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NATGatewayEIP.AllocationId
-      SubnetId: !Ref PublicSubnet1a
-      Tags:
-        - Key: stack
-          Value: production
-
-  NATGatewayEIP:
-     Type: AWS::EC2::EIP
-     Properties:
-        Domain: vpc
-
   RouteIGW:
      Type: AWS::EC2::Route
      Properties:
         RouteTableId: !Ref PublicRouteTable
         DestinationCidrBlock: '0.0.0.0/0'
         GatewayId: !Ref InternetGateway
-
-  RouteNATGateway:
-     Type: AWS::EC2::Route
-     Properties:
-        RouteTableId: !Ref PrivateRouteTable
-        DestinationCidrBlock: '0.0.0.0/0'
-        NatGatewayId: !Ref NATGateway
   
   ipv6CidrBlock:
     Type: AWS::EC2::VPCCidrBlock
