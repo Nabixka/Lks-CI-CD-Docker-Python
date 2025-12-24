@@ -9,7 +9,7 @@ Resources:
       EnableDnsHostnames: 'true'
       Tags:
        - Key: Name
-         Value: lks-jaktim-fadhil
+         Value: lks-kab-banyumas
 
   PublicSubnet1a:
     Type: AWS::EC2::Subnet
