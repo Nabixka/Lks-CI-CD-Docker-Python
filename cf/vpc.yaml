@@ -9,7 +9,7 @@ Resources:
       EnableDnsHostnames: 'true'
       Tags:
        - Key: Name
-         Value: lks-kab-banyumas
+         Value: lks-jaktim-fadhil
 
   PublicSubnet1a:
     Type: AWS::EC2::Subnet
@@ -162,3 +162,9 @@ Outputs:
     Value: !Ref PrivateSubnet1b
     Export:
       Name: PrivateSubnet1bID
+
+  PrivateRouteTableId:
+    Description: Ini PrivateRouteTable
+    Value: !Ref PrivateRouteTable
+    Export:
+      Name: PrivateRouteTableId

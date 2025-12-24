@@ -13,12 +13,12 @@ Resources:
         - IpProtocol: tcp
           FromPort: 2049
           ToPort: 2049
-          CidrIp: 20.2.2.0/24
+          CidrIp: 0.0.0.0/0
 
         - IpProtocol: tcp
           FromPort: 2049
           ToPort: 2049
-          CidrIp: 20.2.3.0/24
+          CidrIp: 0.0.0.0/0
 
         - IpProtocol: tcp
           FromPort: 5000
@@ -28,12 +28,12 @@ Resources:
         - IpProtocol: tcp
           FromPort: 3306
           ToPort: 3306
-          CidrIp: 20.2.2.0/24
+          CidrIp: 0.0.0.0/0
         
         - IpProtocol: tcp
           FromPort: 3306
           ToPort: 3306
-          CidrIp: 20.2.3.0/24
+          CidrIp: 0.0.0.0/0
 
       SecurityGroupEgress:
         - IpProtocol: -1

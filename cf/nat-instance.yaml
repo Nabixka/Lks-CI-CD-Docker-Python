@@ -22,22 +22,13 @@ Resources:
         - Key: Name
           Value: "lks-sg-nat"
       SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 20.2.2.0/24
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
+        - IpProtocol: -1
+          CidrIp: 20.2.2.0/24 
+        - IpProtocol: -1
           CidrIp: 20.2.3.0/24
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: 20.2.2.0/24
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: 20.2.3.0/24
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
 
   NATInstance:
     Type: AWS::EC2::Instance
